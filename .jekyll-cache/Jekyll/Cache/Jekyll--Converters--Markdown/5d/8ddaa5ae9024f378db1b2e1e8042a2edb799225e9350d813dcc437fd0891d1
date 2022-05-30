@@ -1,0 +1,272 @@
+I"I¡<h2 id="ezrsa"><strong>EzRSA</strong></h2>
+
+<p>Pada soal telah disediakan modulus, exponent, dan ciphertext dari sebuah RSA sebagai berikut:</p>
+
+<pre><code class="language-cmd">c=48194219261855563203215132311565813649624212082168963448568445899090
+e=65537
+n=634700503487766158115038509619422295969417670380913058190145906857689
+</code></pre>
+
+<p>Pertama kali lihat adalah nilai n yang sangat kecil, sehingga mudah difaktorkan. Sehingga dengan menggunakan <a href="https://github.com/Ganapati/RsaCtfTool.git">RsaCtfTool</a>, plaintext dapat didapatkan dengan mudah.</p>
+
+<pre><code class="language-cmd">python3 RsaCtfTool.py -n 634700503487766158115038509619422295969417670380913058190145906857689 --uncipher 48194219261855563203215132311565813649624212082168963448568445899090 -e 65537
+</code></pre>
+
+<p>Flag: FindITCTF{3a5y_12iGht?}</p>
+
+<p><br /></p>
+<h2 id="number"><strong>Number</strong></h2>
+
+<p>Pada soal terdapat suatu rangkaian text yang hanya berisi angka:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>70202105202110202100202732028420267202842027020212320252202832026720233202732029520289202482028520295202712024820284202952024920284202125
+</code></pre></div></div>
+
+<p>Bila diteliti lebih lanjut, terdapat suatu susunan angka yang selalu berulang, yaitu angka 202. Bila semua susunan angka ini dihapus dan diganti dengan spasi, maka akan didapatkan representasi <em>decimal</em> dari range <em>ascii printable</em>:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>70 105 110 100 73 84 67 84 70 123 52 83 67 33 73 95 89 48 85 95 71 48 84 95 49 84 125
+</code></pre></div></div>
+
+<p>Menggunakan tool konversi <a href="https://www.rapidtables.com/convert/number/ascii-hex-bin-dec-converter.html">kode decimal ascii ke huruf ascii</a> akan didapatkan teks sebagai berikut:</p>
+
+<p>Flag: FindITCTF{4SC!I_Y0U_G0T_1T}</p>
+
+<p><br /></p>
+<h2 id="vigenere"><strong>Vigenere</strong></h2>
+
+<p>Pada soal diberikan sebuah teks berisi:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Hint: vigorous and sincere. 45 5A 43 52 59 50 54 4F.
+Code: XGQLYGMOZHIVLTKSID
+Note: Masukkan jawaban yang ditemukan ke dalam format flag CTF Find IT untuk mendapatkan flag seutuhnya.
+</code></pre></div></div>
+
+<p>Sesuai dengan namanya, soal ini pasti berhubungan dengan Vigenere Cipher. Dengan adanya ciphertext, maka yang dibutuhkan adalah keynya.</p>
+
+<p>Pada hint terdapat rangkaian hexcode ascii range printable, setelah diubah menjadi huruf ascii, maka menjadi:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>EZCRYPTO
+</code></pre></div></div>
+
+<p>Dengan menggunakan tool online <a href="https://www.dcode.fr/vigenere-cipher">Vigenere Cipher</a>, key dan ciphertext dimasukkan sehingga ditemukan:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>THOUARTAVIGENEREEE
+</code></pre></div></div>
+
+<p>Maka Flag: FindITCTF{THOUARTAVIGENEREEE}</p>
+
+<p><br /></p>
+<h2 id="revtrans"><strong>RevTrans</strong></h2>
+
+<p>Pada challenge diberikan sebuah file python dan ciphertext.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>eiluFIFatv_{Tiy_esyCn}y_ooTd
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">flag</span> <span class="o">=</span> <span class="s">'FindITCTF{REDACTED}'</span>
+
+<span class="k">def</span> <span class="nf">split_len</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+   <span class="k">return</span> <span class="p">[</span><span class="n">seq</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">length</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">),</span> <span class="n">length</span><span class="p">)]</span>
+
+<span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">plaintext</span><span class="p">):</span>
+   <span class="n">order</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">):</span> <span class="n">num</span> <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+   <span class="p">}</span>
+   <span class="n">reversetext</span> <span class="o">=</span><span class="s">''</span>
+   <span class="n">ciphertext</span> <span class="o">=</span> <span class="s">''</span>
+   <span class="n">i</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">plaintext</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+   <span class="k">while</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="n">reversetext</span> <span class="o">=</span> <span class="n">reversetext</span> <span class="o">+</span> <span class="n">plaintext</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+      <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span>
+   <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">order</span><span class="p">.</span><span class="n">keys</span><span class="p">()):</span>
+      <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">split_len</span><span class="p">(</span><span class="n">reversetext</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)):</span>
+         <span class="k">try</span><span class="p">:</span><span class="n">ciphertext</span> <span class="o">+=</span> <span class="n">part</span><span class="p">[</span><span class="n">order</span><span class="p">[</span><span class="n">index</span><span class="p">]]</span>
+         <span class="k">except</span> <span class="nb">IndexError</span><span class="p">:</span>
+            <span class="k">continue</span>            
+   <span class="k">return</span> <span class="n">ciphertext</span>
+<span class="k">print</span><span class="p">(</span><span class="n">encode</span><span class="p">(</span><span class="s">'4321'</span><span class="p">,</span> <span class="n">flag</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>Dari kode tersebut, akan dilakukan reverse dari plaintext, membaginya menjadi sebanyak <em>order</em> sama rata, kemudian menyusun ciphertext perbagian mengikuti <em>order</em> dengan key <em>index</em>:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">flag</span> <span class="o">=</span> <span class="n">FindItCTF</span><span class="p">{</span><span class="n">REDACTED</span><span class="p">}</span><span class="s">'
+ 
+# bagi into chunks
+def split_len(seq, length):
+   return [seq[i:i + length] for i in range(0, len(seq), length)]
+ 
+def encode(key, plaintext):
+   order = {
+      int(val): num for num, val in enumerate(key)
+   }
+   reversetext =''
+   ciphertext = ''
+   i=len(plaintext)-1
+   while i &gt;= 0:
+      reversetext = reversetext + plaintext[i]
+      i=i-1
+   "untuk setiap order"
+   for index in sorted(order.keys()):
+      " bagi 4 4 bagian"
+      for part in split_len(reversetext, len(key)):
+         try:ciphertext += part[order[index]]
+         except IndexError:
+            continue     
+   return ciphertext
+ 
+print(encode('</span><span class="mi">4321</span><span class="s">', flag))
+</span></code></pre></div></div>
+
+<p><img src="https://lh5.googleusercontent.com/1ImxFeQcQgZJDBXIyDwrfYdP1Jwv11hCMLq7xHnJLvGXg1HRI5ZNNW9hKkCn1AfQ08Dfwo1cYUYT-QQ4pJvmgnj7Fs0hROAZ5C0XEYyxJFIXz81_wORBeqANoRMLASOptdw3utgPnRjfn1U2Vw" alt="" /></p>
+
+<p>Dari percobaan tersebut, saya merasa teknik enkripsi seperti ini dapat dilakukan secara brute force dengan melakukan mapping dari posisi awal ke posisi setelah dilakukan enkripsi. Untuk mengetes hipotesis, saya mengganti flag dengan flag buatan yang menyamai panjang dari output dan tetap mempertahankan posisi kurung kurawal.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>flag = '123456789{qwertyuiopasdfghj}'
+</code></pre></div></div>
+
+<p>dari flag buatan tersebut dikeluarkan seperti ini:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gaue951hsir{62jdotq73}fpyw84 #flag buatan
+eiluFIFatv_{Tiy_esyCn}y_ooTd #flag asli
+</code></pre></div></div>
+
+<p>kurung kurawal berada pada tempat yang sama. Merasa yakin, saya membuat script untuk melakukan mapping index dari posisi awal ke akhir:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sample</span>     <span class="o">=</span> <span class="s">"123456789{qwertyuiopasdfghj}"</span>
+<span class="n">sample_enc</span> <span class="o">=</span> <span class="s">"gaue951hsir{62jdotq73}fpyw84"</span>
+<span class="n">enc_flag</span>   <span class="o">=</span> <span class="s">"eiluFIFatv_{Tiy_esyCn}y_ooTd"</span>
+ 
+<span class="n">mapping</span> <span class="o">=</span> <span class="p">{}</span>
+ 
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">)):</span>
+    <span class="n">mapping</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample_enc</span><span class="p">.</span><span class="n">index</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+ 
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">enc_flag</span><span class="p">)):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">enc_flag</span><span class="p">[</span><span class="n">mapping</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">end</span><span class="o">=</span><span class="s">""</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Dengan output:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FindITCTF{you_solve_it_yeay}
+</code></pre></div></div>
+
+<p><br /></p>
+<h2 id="happy-forever"><strong>Happy Forever</strong></h2>
+
+<p>Pada challenge, diberikan:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">secret</span> <span class="kn">import</span> <span class="n">HAPPY_NUM</span><span class="p">,</span> <span class="n">FLAG</span>
+<span class="kn">import</span> <span class="nn">base64</span>
+ 
+<span class="s">"""reverse kemudian baca jadi hex """</span>
+<span class="n">FLAGenc</span> <span class="o">=</span> <span class="n">FLAG</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">].</span><span class="n">encode</span><span class="p">().</span><span class="nb">hex</span><span class="p">()</span>
+ 
+<span class="n">ciphertext</span> <span class="o">=</span> <span class="p">[(</span><span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">^</span><span class="p">(</span><span class="n">HAPPY_NUM</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">FLAGenc</span><span class="p">)]</span>
+ 
+<span class="s">"""setiap hex char di xor happy_num + i"""</span>
+<span class="s">"""assume happy_num list of num"""</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">FLAGenc</span><span class="p">):</span>
+    <span class="n">ciphertext</span> <span class="o">+=</span> <span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">^</span><span class="p">(</span><span class="n">HAPPY_NUM</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">i</span><span class="p">)</span>
+ 
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"ciphertext = </span><span class="si">{</span><span class="n">ciphertext</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ciphertext</span> <span class="o">=</span> <span class="p">[</span><span class="mi">54</span><span class="p">,</span> <span class="mi">108</span><span class="p">,</span> <span class="mi">63</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">118</span><span class="p">,</span> <span class="mi">97</span><span class="p">,</span> <span class="mi">101</span><span class="p">,</span> <span class="mi">85</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">88</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">79</span><span class="p">,</span> <span class="mi">186</span><span class="p">,</span> <span class="mi">164</span><span class="p">,</span> <span class="mi">160</span><span class="p">,</span> <span class="mi">174</span><span class="p">,</span> <span class="mi">149</span><span class="p">,</span> <span class="mi">246</span><span class="p">,</span> <span class="mi">249</span><span class="p">,</span> <span class="mi">237</span><span class="p">,</span> <span class="mi">189</span><span class="p">,</span> <span class="mi">232</span><span class="p">,</span> <span class="mi">131</span><span class="p">,</span> <span class="mi">223</span><span class="p">,</span> <span class="mi">146</span><span class="p">,</span> <span class="mi">206</span><span class="p">,</span> <span class="mi">305</span><span class="p">,</span> <span class="mi">317</span><span class="p">,</span> <span class="mi">291</span><span class="p">,</span> <span class="mi">294</span><span class="p">,</span> <span class="mi">286</span><span class="p">,</span> <span class="mi">284</span><span class="p">,</span> <span class="mi">374</span><span class="p">,</span> <span class="mi">379</span><span class="p">,</span> <span class="mi">358</span><span class="p">,</span> <span class="mi">362</span><span class="p">,</span> <span class="mi">367</span><span class="p">,</span> <span class="mi">337</span><span class="p">,</span> <span class="mi">270</span><span class="p">,</span> <span class="mi">344</span><span class="p">,</span> <span class="mi">328</span><span class="p">,</span> <span class="mi">333</span><span class="p">,</span> <span class="mi">332</span><span class="p">,</span> <span class="mi">328</span><span class="p">,</span> <span class="mi">439</span><span class="p">,</span> <span class="mi">425</span><span class="p">,</span> <span class="mi">405</span><span class="p">,</span> <span class="mi">403</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">415</span><span class="p">,</span> <span class="mi">469</span><span class="p">,</span> <span class="mi">388</span><span class="p">,</span> <span class="mi">399</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">509</span><span class="p">,</span> <span class="mi">424</span><span class="p">,</span> <span class="mi">480</span><span class="p">,</span> <span class="mi">488</span><span class="p">,</span> <span class="mi">458</span><span class="p">,</span> <span class="mi">608</span><span class="p">,</span> <span class="mi">547</span><span class="p">,</span> <span class="mi">553</span><span class="p">,</span> <span class="mi">533</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">515</span><span class="p">,</span> <span class="mi">599</span><span class="p">,</span> <span class="mi">588</span><span class="p">,</span> <span class="mi">692</span><span class="p">,</span> <span class="mi">738</span><span class="p">,</span> <span class="mi">693</span><span class="p">,</span> <span class="mi">640</span><span class="p">,</span> <span class="mi">652</span><span class="p">,</span> <span class="mi">675</span><span class="p">,</span> <span class="mi">759</span><span class="p">,</span> <span class="mi">763</span><span class="p">,</span> <span class="mi">740</span><span class="p">,</span> <span class="mi">736</span><span class="p">,</span> <span class="mi">738</span><span class="p">,</span> <span class="mi">750</span><span class="p">,</span> <span class="mi">726</span><span class="p">,</span> <span class="mi">732</span><span class="p">,</span> <span class="mi">735</span><span class="p">,</span> <span class="mi">724</span><span class="p">,</span> <span class="mi">705</span><span class="p">,</span> <span class="mi">714</span><span class="p">,</span> <span class="mi">823</span><span class="p">,</span> <span class="mi">876</span><span class="p">,</span> <span class="mi">827</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="mi">788</span><span class="p">,</span> <span class="mi">796</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>Menurut <a href="https://en.wikipedia.org/wiki/Happy_number">wikipedia</a>, Happy Number merupakan sebuah angka spesial yang mengikuti sebuah aturan. Saya tidak membaca dengan detil dan langsung melakukan scroll ke bawah dan menemukan:</p>
+
+<p><img src="https://lh4.googleusercontent.com/GCaMJ8k7_NsdCW1yWPsMHbG2rrZuW6lbx18SsCgNxiAUrwXwpeShyLo8Y45zR6-kIaQL6BSOSJGsN1oefJUAkOfixv9dYD6SefmmyRDfNlCknx6eauDqwdxPNVAUhZY5s5fXOuogxBKxQhjFqA" alt="" /></p>
+
+<p>Saya langsung mengkopi sequence tersebut dan mencoba melakukan dekripsi:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ciphertext</span> <span class="o">=</span> <span class="p">[</span><span class="mi">54</span><span class="p">,</span> <span class="mi">108</span><span class="p">,</span> <span class="mi">63</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">118</span><span class="p">,</span> <span class="mi">97</span><span class="p">,</span> <span class="mi">101</span><span class="p">,</span> <span class="mi">85</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">88</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">79</span><span class="p">,</span> <span class="mi">186</span><span class="p">,</span> <span class="mi">164</span><span class="p">,</span> <span class="mi">160</span><span class="p">,</span> <span class="mi">174</span><span class="p">,</span> <span class="mi">149</span><span class="p">,</span> <span class="mi">246</span><span class="p">,</span> <span class="mi">249</span><span class="p">,</span> <span class="mi">237</span><span class="p">,</span> <span class="mi">189</span><span class="p">,</span> <span class="mi">232</span><span class="p">,</span> <span class="mi">131</span><span class="p">,</span> <span class="mi">223</span><span class="p">,</span> <span class="mi">146</span><span class="p">,</span> <span class="mi">206</span><span class="p">,</span> <span class="mi">305</span><span class="p">,</span> <span class="mi">317</span><span class="p">,</span> <span class="mi">291</span><span class="p">,</span> <span class="mi">294</span><span class="p">,</span> <span class="mi">286</span><span class="p">,</span> <span class="mi">284</span><span class="p">,</span> <span class="mi">374</span><span class="p">,</span> <span class="mi">379</span><span class="p">,</span> <span class="mi">358</span><span class="p">,</span> <span class="mi">362</span><span class="p">,</span> <span class="mi">367</span><span class="p">,</span> <span class="mi">337</span><span class="p">,</span> <span class="mi">270</span><span class="p">,</span> <span class="mi">344</span><span class="p">,</span> <span class="mi">328</span><span class="p">,</span> <span class="mi">333</span><span class="p">,</span> <span class="mi">332</span><span class="p">,</span> <span class="mi">328</span><span class="p">,</span> <span class="mi">439</span><span class="p">,</span> <span class="mi">425</span><span class="p">,</span> <span class="mi">405</span><span class="p">,</span> <span class="mi">403</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">415</span><span class="p">,</span> <span class="mi">469</span><span class="p">,</span> <span class="mi">388</span><span class="p">,</span> <span class="mi">399</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">509</span><span class="p">,</span> <span class="mi">424</span><span class="p">,</span> <span class="mi">480</span><span class="p">,</span> <span class="mi">488</span><span class="p">,</span> <span class="mi">458</span><span class="p">,</span> <span class="mi">608</span><span class="p">,</span> <span class="mi">547</span><span class="p">,</span> <span class="mi">553</span><span class="p">,</span> <span class="mi">533</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">515</span><span class="p">,</span> <span class="mi">599</span><span class="p">,</span> <span class="mi">588</span><span class="p">,</span> <span class="mi">692</span><span class="p">,</span> <span class="mi">738</span><span class="p">,</span> <span class="mi">693</span><span class="p">,</span> <span class="mi">640</span><span class="p">,</span> <span class="mi">652</span><span class="p">,</span> <span class="mi">675</span><span class="p">,</span> <span class="mi">759</span><span class="p">,</span> <span class="mi">763</span><span class="p">,</span> <span class="mi">740</span><span class="p">,</span> <span class="mi">736</span><span class="p">,</span> <span class="mi">738</span><span class="p">,</span> <span class="mi">750</span><span class="p">,</span> <span class="mi">726</span><span class="p">,</span> <span class="mi">732</span><span class="p">,</span> <span class="mi">735</span><span class="p">,</span> <span class="mi">724</span><span class="p">,</span> <span class="mi">705</span><span class="p">,</span> <span class="mi">714</span><span class="p">,</span> <span class="mi">823</span><span class="p">,</span> <span class="mi">876</span><span class="p">,</span> <span class="mi">827</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="mi">788</span><span class="p">,</span> <span class="mi">796</span><span class="p">]</span>
+ 
+<span class="n">not_happy_number</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">49</span><span class="p">,</span> <span class="mi">68</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">79</span><span class="p">,</span> <span class="mi">82</span><span class="p">,</span> <span class="mi">86</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">94</span><span class="p">,</span> <span class="mi">97</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">103</span><span class="p">,</span> <span class="mi">109</span><span class="p">,</span> <span class="mi">129</span><span class="p">,</span> <span class="mi">130</span><span class="p">,</span> <span class="mi">133</span><span class="p">,</span> <span class="mi">139</span><span class="p">,</span> <span class="mi">167</span><span class="p">,</span> <span class="mi">176</span><span class="p">,</span> <span class="mi">188</span><span class="p">,</span> <span class="mi">190</span><span class="p">,</span> <span class="mi">192</span><span class="p">,</span> <span class="mi">193</span><span class="p">,</span> <span class="mi">203</span><span class="p">,</span> <span class="mi">208</span><span class="p">,</span> <span class="mi">219</span><span class="p">,</span> <span class="mi">226</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="mi">236</span><span class="p">,</span> <span class="mi">239</span><span class="p">,</span> <span class="mi">262</span><span class="p">,</span> <span class="mi">263</span><span class="p">,</span> <span class="mi">280</span><span class="p">,</span> <span class="mi">291</span><span class="p">,</span> <span class="mi">293</span><span class="p">,</span> <span class="mi">301</span><span class="p">,</span> <span class="mi">302</span><span class="p">,</span> <span class="mi">310</span><span class="p">,</span> <span class="mi">313</span><span class="p">,</span> <span class="mi">319</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">326</span><span class="p">,</span> <span class="mi">329</span><span class="p">,</span> <span class="mi">331</span><span class="p">,</span> <span class="mi">338</span><span class="p">,</span> <span class="mi">356</span><span class="p">,</span> <span class="mi">362</span><span class="p">,</span> <span class="mi">365</span><span class="p">,</span> <span class="mi">367</span><span class="p">,</span> <span class="mi">368</span><span class="p">,</span> <span class="mi">376</span><span class="p">,</span> <span class="mi">379</span><span class="p">,</span> <span class="mi">383</span><span class="p">,</span> <span class="mi">386</span><span class="p">,</span> <span class="mi">391</span><span class="p">,</span> <span class="mi">392</span><span class="p">,</span> <span class="mi">397</span><span class="p">,</span> <span class="mi">404</span><span class="p">,</span> <span class="mi">409</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">446</span><span class="p">,</span> <span class="mi">464</span><span class="p">,</span> <span class="mi">469</span><span class="p">,</span> <span class="mi">478</span><span class="p">,</span> <span class="mi">487</span><span class="p">,</span> <span class="mi">490</span><span class="p">,</span> <span class="mi">496</span><span class="p">,</span> <span class="mi">536</span><span class="p">,</span> <span class="mi">556</span><span class="p">,</span> <span class="mi">563</span><span class="p">,</span> <span class="mi">565</span><span class="p">,</span> <span class="mi">566</span><span class="p">,</span> <span class="mi">608</span><span class="p">,</span> <span class="mi">617</span><span class="p">,</span> <span class="mi">622</span><span class="p">,</span> <span class="mi">623</span><span class="p">,</span> <span class="mi">632</span><span class="p">,</span> <span class="mi">635</span><span class="p">,</span> <span class="mi">637</span><span class="p">,</span> <span class="mi">638</span><span class="p">,</span> <span class="mi">644</span><span class="p">,</span> <span class="mi">649</span><span class="p">,</span> <span class="mi">653</span><span class="p">,</span> <span class="mi">655</span><span class="p">,</span> <span class="mi">656</span><span class="p">,</span> <span class="mi">665</span><span class="p">,</span> <span class="mi">671</span><span class="p">,</span> <span class="mi">673</span><span class="p">,</span> <span class="mi">680</span><span class="p">,</span> <span class="mi">683</span><span class="p">,</span> <span class="mi">694</span><span class="p">,</span> <span class="mi">700</span><span class="p">,</span> <span class="mi">709</span><span class="p">,</span> <span class="mi">716</span><span class="p">,</span> <span class="mi">736</span><span class="p">,</span> <span class="mi">739</span><span class="p">,</span> <span class="mi">748</span><span class="p">,</span> <span class="mi">761</span><span class="p">,</span> <span class="mi">763</span><span class="p">,</span> <span class="mi">784</span><span class="p">,</span> <span class="mi">790</span><span class="p">,</span> <span class="mi">793</span><span class="p">,</span> <span class="mi">802</span><span class="p">,</span> <span class="mi">806</span><span class="p">,</span> <span class="mi">818</span><span class="p">,</span> <span class="mi">820</span><span class="p">,</span> <span class="mi">833</span><span class="p">,</span> <span class="mi">836</span><span class="p">,</span> <span class="mi">847</span><span class="p">,</span> <span class="mi">860</span><span class="p">,</span> <span class="mi">863</span><span class="p">,</span> <span class="mi">874</span><span class="p">,</span> <span class="mi">881</span><span class="p">,</span> <span class="mi">888</span><span class="p">,</span> <span class="mi">899</span><span class="p">,</span> <span class="mi">901</span><span class="p">,</span> <span class="mi">904</span><span class="p">,</span> <span class="mi">907</span><span class="p">,</span> <span class="mi">910</span><span class="p">,</span> <span class="mi">912</span><span class="p">,</span> <span class="mi">913</span><span class="p">,</span> <span class="mi">921</span><span class="p">,</span> <span class="mi">923</span><span class="p">,</span> <span class="mi">931</span><span class="p">,</span> <span class="mi">932</span><span class="p">,</span> <span class="mi">937</span><span class="p">,</span> <span class="mi">940</span><span class="p">,</span> <span class="mi">946</span><span class="p">,</span> <span class="mi">964</span><span class="p">,</span> <span class="mi">970</span><span class="p">,</span> <span class="mi">973</span><span class="p">,</span> <span class="mi">989</span><span class="p">,</span> <span class="mi">998</span><span class="p">,</span> <span class="mi">1000</span><span class="p">]</span>
+ 
+<span class="n">new_hex</span> <span class="o">=</span> <span class="s">""</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ec</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">):</span>
+    <span class="n">new_hex</span> <span class="o">+=</span> <span class="nb">chr</span><span class="p">(</span><span class="n">ec</span><span class="o">^</span><span class="p">(</span><span class="n">not_happy_number</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">i</span><span class="p">))</span>
+ 
+<span class="n">p</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">new_hex</span><span class="p">).</span><span class="n">decode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">p</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+</code></pre></div></div>
+
+<p>Dengan output berupa flag:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FindITCTF{1_5H0Uld_B3_h4pPy_4f73r4Ll_r19H7?_999999}
+</code></pre></div></div>
+
+<p><br /></p>
+<h2 id="randomsha"><strong>RandomSHA</strong></h2>
+
+<p>Pada soal diberikan:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">random</span><span class="p">,</span><span class="n">string</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
+
+<span class="n">flag</span> <span class="o">=</span> <span class="s">"FindITCTF{REDACTED}"</span>
+<span class="n">enc_flag</span> <span class="o">=</span> <span class="s">""</span>
+<span class="n">random</span><span class="p">.</span><span class="n">seed</span><span class="p">(</span><span class="s">"FINDIT"</span><span class="p">)</span>
+<span class="n">now</span> <span class="o">=</span> <span class="s">""</span>
+<span class="n">ct</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">flag</span><span class="p">:</span>
+  <span class="k">if</span> <span class="n">c</span><span class="p">.</span><span class="n">islower</span><span class="p">():</span>
+	  <span class="n">enc_flag</span> <span class="o">+=</span> <span class="nb">chr</span><span class="p">((</span><span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">-</span><span class="nb">ord</span><span class="p">(</span><span class="s">'a'</span><span class="p">)</span><span class="o">+</span><span class="n">random</span><span class="p">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">26</span><span class="p">))</span><span class="o">%</span><span class="mi">26</span> <span class="o">+</span> <span class="nb">ord</span><span class="p">(</span><span class="s">'a'</span><span class="p">))</span>
+  <span class="k">elif</span> <span class="n">c</span><span class="p">.</span><span class="n">isupper</span><span class="p">():</span>
+	  <span class="n">enc_flag</span> <span class="o">+=</span> <span class="nb">chr</span><span class="p">((</span><span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">-</span><span class="nb">ord</span><span class="p">(</span><span class="s">'A'</span><span class="p">)</span><span class="o">+</span><span class="n">random</span><span class="p">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">26</span><span class="p">))</span><span class="o">%</span><span class="mi">26</span> <span class="o">+</span> <span class="nb">ord</span><span class="p">(</span><span class="s">'A'</span><span class="p">))</span>
+  <span class="k">elif</span> <span class="n">c</span><span class="p">.</span><span class="n">isdigit</span><span class="p">():</span>
+	  <span class="n">enc_flag</span> <span class="o">+=</span> <span class="nb">chr</span><span class="p">((</span><span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">-</span><span class="nb">ord</span><span class="p">(</span><span class="s">'0'</span><span class="p">)</span><span class="o">+</span><span class="n">random</span><span class="p">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span><span class="o">%</span><span class="mi">10</span> <span class="o">+</span> <span class="nb">ord</span><span class="p">(</span><span class="s">'0'</span><span class="p">))</span>
+  <span class="k">else</span><span class="p">:</span>
+	  <span class="n">enc_flag</span> <span class="o">+=</span> <span class="n">c</span>
+
+<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">enc_flag</span><span class="p">:</span>
+    <span class="n">now</span> <span class="o">+=</span> <span class="n">c</span>
+    <span class="n">ct</span><span class="p">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">hashlib</span><span class="p">.</span><span class="n">sha512</span><span class="p">(</span><span class="n">now</span><span class="p">.</span><span class="n">encode</span><span class="p">()).</span><span class="n">hexdigest</span><span class="p">(),</span> <span class="mi">16</span><span class="p">)</span><span class="o">&gt;&gt;</span><span class="mi">256</span>
+        <span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"ct = </span><span class="si">{</span><span class="n">ct</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ct = [16827491998982303935845912726250001246506259002934220576276361965668860811468, 62713198357581005397268349101156886804274040256360973798128860841455571633780, 
+.....]
+</code></pre></div></div>
+
+<p>Dari output dan chall.py kita tahu program menyimpan hasil hashing setiap penambahan character, kita tinggal mengikuti jejak hashnya dan mendapatkan flagnya. Yang membuatnya tidak semudah itu adalah adanya campur tangan random, untungnya kita diberikan seednya dan dapat melakukan brute force dengan mengikuti alur program.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import random,string
+import hashlib
+ct =[ 16827491998982303935845912726250001246506259002934220576276361965668860811468,
+..,
+..,
+32141083108499196137603954986721075935614843412879401775449594747381368240336
+]
+ 
+crip_flag = ""
+brute = """abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&amp;\\'()+,-./:;&lt;=&gt;?@[\\]^_`|~\}{\""""
+for i, hashc in enumerate(ct): # string main
+    for cc in brute: # guessing game
+        random.seed("FINDIT")
+        enc_fl_guess =""
+        for c in crip_flag + cc:
+            if c.islower():
+     			enc_fl_guess += chr((ord(c)-ord('a')+random.randrange(0,26)) % 26 + ord('a'))
+            elif c.isupper():
+                enc_fl_guess += chr((ord(c)-ord('A')+random.randrange(0,26))%26 + ord('A'))
+            elif c.isdigit():
+                enc_fl_guess += chr((ord(c)-ord('0')+random.randrange(0,10))%10 + ord('0'))
+            else:
+                enc_fl_guess += c
+ 
+        if int(hashlib.sha512(enc_fl_guess.encode()).hexdigest(), 16)&gt;&gt;256 == ct[len(enc_fl_guess) - 1]:
+            crip_flag += cc
+            print(crip_flag)
+</code></pre></div></div>
+
+<p>Dengan output:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FindITCTF{W3ll_R4nd0m_4nd_SHA_r1ghtt?}
+</code></pre></div></div>
+<p><a href="/">home</a></p>
+:ET
