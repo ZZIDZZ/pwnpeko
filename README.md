@@ -9,15 +9,18 @@ Demo: [https://ashishchaudhary.in/hacker-blog](https://ashishchaudhary.in/hacker
 1. Pagination
 2. SEO tags
 3. Archive Page
-4. RSS
-5. Sitemap 
+4. About Page
+5. RSS (`https://base-url/atom`)
+6. Sitemap (`https://base-url/sitemap`)
+7. Google Analytics (optional)
 
 ## Usage
 
 1. Fork and Clone this repository
 2. Customize your blog
 3. Add a new post in `_posts/` directory with proper name format (as shown in placeholder posts)
-4. Commit and push to master 
+4. Commit and push to master on a repository named `<githubusername.github.io>`.
+5. Visit `<githubusername>.github.io`
 
 ## Local Build
 
@@ -25,8 +28,10 @@ If you want to see the changes before pushing the blog to Github, do a local bui
 
 1. [`gem install jekyll`](https://jekyllrb.com/docs/installation/#install-with-rubygems)
 2. `gem install jekyll-seo-tag`
-3. (`cd` to the blog directory, then:) `jekyll serve --watch --port 8000`
-4. Go to `http://0.0.0.0:8000/` in your web browser.
+3. `gem install jekyll-paginate`
+4. `gem install jekyll-sitemap`
+5. (`cd` to the blog directory, then:) `jekyll serve --watch --port 8000`
+6. Go to `http://0.0.0.0:8000/` in your web browser.
 
 *Note: In case you have set a `baseurl` different than `/` in `_config.yml`, go to `http://0.0.0.0:8000/BASEURL/` instead.*
 
