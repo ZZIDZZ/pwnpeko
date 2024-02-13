@@ -1,6 +1,6 @@
 ---
-title: "Quall FindIT CTF UGM 2022 Crypto"
-date: "2022-05-21"
+title: "Quall FindIT CTF UGM 2022 Digital Forensics"
+date: "2024-02-13"
 published: true
 ---  
 
